@@ -1,0 +1,28 @@
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+**/target/
+**/node_modules/
+**/dist/
+
+# Local tooling, logs, and database files
+.idea/
+.vscode/
+!.vscode/extensions.json
+*.log
+logs/
+**/logs/
+*.db
+*.sqlite
+*.sqlite3
+*.mv.db
+*.trace.db
+
+# Local certificates and private keys
+*.pem
+*.key
+*.p12
