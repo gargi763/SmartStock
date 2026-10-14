@@ -13,6 +13,7 @@ SmartStock is a full-stack stock portfolio management application for practicing
 - Submit virtual buy and sell transactions. The backend uses its stored stock price, checks virtual cash and owned quantities, and records the resulting transactions.
 - View holdings, average purchase costs, cash, portfolio valuation, transaction history, and realized/unrealized profit and loss.
 - View historical daily prices and company fundamentals when the configured market-data provider supports the requested data.
+- Keep a private investment journal with a thesis, lessons learned, optional tags, and an optional link to one of the account's completed virtual trades.
 
 ### Admin portal
 
@@ -133,11 +134,17 @@ Protected endpoints use HTTP Basic unless otherwise noted. Admin endpoints addit
 | `GET` | `/api/v1/stocks/{symbol}/fundamentals` | Authenticated | Retrieve fundamentals or a plan-restricted partial response |
 | `GET` | `/api/v1/portfolios` | Authenticated, user-scoped | List the caller's portfolios |
 | `POST` | `/api/v1/portfolios?name={name}` | Authenticated | Create a virtual portfolio |
+| `PUT` | `/api/v1/portfolios/{portfolioId}` | Authenticated, owner-only | Rename the caller's portfolio using `{"name":"Retirement"}` |
 | `POST` | `/api/v1/portfolios/{portfolioId}/buy` | Authenticated, owner-only | Execute a validated virtual buy |
 | `POST` | `/api/v1/portfolios/{portfolioId}/sell` | Authenticated, owner-only | Execute a validated virtual sell |
 | `GET` | `/api/v1/watchlist` | Authenticated, user-scoped | List the caller's watchlist |
 | `POST` | `/api/v1/watchlist` | Authenticated, user-scoped | Add a stock using `{"symbol":"AAPL"}` |
 | `DELETE` | `/api/v1/watchlist/{symbol}` | Authenticated, user-scoped | Remove a stock from the caller's watchlist |
+| `GET` | `/api/v1/investment-journal` | Authenticated, user-scoped | List the caller's investment journal entries |
+| `GET` | `/api/v1/investment-journal/trades` | Authenticated, user-scoped | List the caller's completed virtual trades for optional journal links |
+| `POST` | `/api/v1/investment-journal` | Authenticated, user-scoped | Create a journal entry |
+| `PUT` | `/api/v1/investment-journal/{entryId}` | Authenticated, owner-only | Edit one of the caller's journal entries |
+| `DELETE` | `/api/v1/investment-journal/{entryId}` | Authenticated, owner-only | Delete one of the caller's journal entries |
 | `GET` | `/api/v1/admin/dashboard` | Admin | Read aggregate platform statistics |
 | `GET` | `/api/v1/admin/users` | Admin | List users without password hashes |
 | `GET` | `/api/v1/admin/users/{userId}` | Admin | Read one sanitized user record |

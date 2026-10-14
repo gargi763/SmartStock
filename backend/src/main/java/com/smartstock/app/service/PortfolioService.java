@@ -5,6 +5,7 @@ import com.smartstock.app.dto.HoldingResponse;
 import com.smartstock.app.dto.PortfolioSummaryResponse;
 import com.smartstock.app.dto.TradeRequest;
 import com.smartstock.app.dto.TransactionResponse;
+import com.smartstock.app.dto.UpdatePortfolioNameRequest;
 import com.smartstock.app.exception.InsufficientFundsException;
 import com.smartstock.app.exception.InvalidTradeException;
 import com.smartstock.app.exception.ResourceNotFoundException;
@@ -67,6 +68,20 @@ public class PortfolioService {
 
         Portfolio saved = portfolioRepository.save(portfolio);
         return summaryForPortfolio(saved);
+    }
+
+    @Transactional
+    public PortfolioSummaryResponse renamePortfolio(String username,
+                                                   Long portfolioId,
+                                                   UpdatePortfolioNameRequest request) {
+        User user = validateUser(username);
+        Portfolio portfolio = validatePortfolioForUpdate(user, portfolioId);
+        if (request.name() == null || request.name().isBlank()) {
+            throw new InvalidTradeException("Portfolio name is required");
+        }
+
+        portfolio.rename(request.name());
+        return summaryForPortfolio(portfolio);
     }
 
     @Transactional

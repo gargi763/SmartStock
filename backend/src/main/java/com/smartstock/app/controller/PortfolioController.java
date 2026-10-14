@@ -3,6 +3,7 @@ package com.smartstock.app.controller;
 import com.smartstock.app.domain.User;
 import com.smartstock.app.dto.PortfolioSummaryResponse;
 import com.smartstock.app.dto.TradeRequest;
+import com.smartstock.app.dto.UpdatePortfolioNameRequest;
 import com.smartstock.app.service.PortfolioService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,15 @@ public class PortfolioController {
     public ResponseEntity<PortfolioSummaryResponse> createPortfolio(@RequestParam String name, Authentication authentication) {
         String username = authentication.getName();
         return ResponseEntity.ok(portfolioService.createPortfolio(username, name));
+    }
+
+    @PutMapping("/portfolios/{portfolioId}")
+    public ResponseEntity<PortfolioSummaryResponse> renamePortfolio(
+            @PathVariable Long portfolioId,
+            @Valid @RequestBody UpdatePortfolioNameRequest request,
+            Authentication authentication) {
+        return ResponseEntity.ok(portfolioService.renamePortfolio(
+                authentication.getName(), portfolioId, request));
     }
 
     @PostMapping("/portfolios/{portfolioId}/buy")

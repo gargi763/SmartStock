@@ -50,6 +50,13 @@ public class Portfolio {
         cashBalance = cashBalance.subtract(amount);
     }
 
+    public void rename(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Portfolio name is required");
+        }
+        this.name = name.trim();
+    }
+
     public void creditCash(BigDecimal amount) {
         if (amount == null || amount.signum() <= 0) {
             throw new IllegalArgumentException("Cash credit must be greater than zero");

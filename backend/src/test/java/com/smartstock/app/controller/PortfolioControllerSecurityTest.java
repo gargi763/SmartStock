@@ -1,6 +1,7 @@
 package com.smartstock.app.controller;
 
 import com.smartstock.app.config.SecurityConfig;
+import com.smartstock.app.dto.UpdatePortfolioNameRequest;
 import com.smartstock.app.service.PortfolioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PortfolioController.class)
@@ -31,6 +33,10 @@ class PortfolioControllerSecurityTest {
         mockMvc.perform(get("/api/v1/portfolios"))
                 .andExpect(status().isUnauthorized());
         mockMvc.perform(post("/api/v1/portfolios").param("name", "Private"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(put("/api/v1/portfolios/42")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Updated\"}"))
                 .andExpect(status().isUnauthorized());
 
         String trade = """
@@ -53,5 +59,26 @@ class PortfolioControllerSecurityTest {
                 .andExpect(status().isOk());
 
         verify(portfolioService).getPortfoliosForUser("alice");
+    }
+
+    @Test
+    @WithMockUser(username = "alice")
+    void renamePortfolio_usesAuthenticatedPrincipalAndValidatedRequest() throws Exception {
+        mockMvc.perform(put("/api/v1/portfolios/42")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Updated\"}"))
+                .andExpect(status().isOk());
+
+        verify(portfolioService).renamePortfolio(
+                "alice", 42L, new UpdatePortfolioNameRequest("Updated"));
+    }
+
+    @Test
+    @WithMockUser(username = "alice")
+    void renamePortfolio_rejectsBlankName() throws Exception {
+        mockMvc.perform(put("/api/v1/portfolios/42")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\" \"}"))
+                .andExpect(status().isBadRequest());
     }
 }

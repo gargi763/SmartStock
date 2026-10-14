@@ -3,6 +3,7 @@ package com.smartstock.app;
 import com.smartstock.app.domain.*;
 import com.smartstock.app.dto.PortfolioSummaryResponse;
 import com.smartstock.app.dto.TradeRequest;
+import com.smartstock.app.dto.UpdatePortfolioNameRequest;
 import com.smartstock.app.repository.*;
 import com.smartstock.app.service.PortfolioService;
 import com.smartstock.app.exception.InsufficientFundsException;
@@ -129,6 +130,52 @@ class PortfolioServiceTest {
                     assertThat(summary.holdings()).hasSize(1);
                     assertThat(summary.transactions()).hasSize(1);
                 });
+    }
+
+    @Test
+    void renamePortfolio_trimsNameAndPreservesPortfolioData() {
+        PortfolioSummaryResponse summary = portfolioService.buyStock(
+                "alice", portfolio.getId(), new TradeRequest("AAPL", BigDecimal.ONE, BigDecimal.ZERO));
+
+        PortfolioSummaryResponse renamed = portfolioService.renamePortfolio(
+                "alice", portfolio.getId(), new UpdatePortfolioNameRequest("  Retirement  "));
+
+        assertThat(renamed.name()).isEqualTo("Retirement");
+        assertThat(renamed.cashBalance()).isEqualByComparingTo(summary.cashBalance());
+        assertThat(renamed.holdings()).hasSize(1);
+        assertThat(renamed.transactions()).hasSize(1);
+        assertThat(portfolioRepository.findById(portfolio.getId()).orElseThrow().getName())
+                .isEqualTo("Retirement");
+    }
+
+    @Test
+    void renamePortfolio_rejectsAnotherUsersPortfolio() {
+        User bob = userRepository.save(User.builder()
+                .username("bob")
+                .email("bob@test.com")
+                .password("pw")
+                .roles(java.util.Set.of(Role.USER))
+                .build());
+        Portfolio bobsPortfolio = portfolioRepository.save(Portfolio.builder()
+                .name("Bob's portfolio")
+                .cashBalance(new BigDecimal("5000.00"))
+                .user(bob)
+                .build());
+
+        assertThatThrownBy(() -> portfolioService.renamePortfolio(
+                "alice", bobsPortfolio.getId(), new UpdatePortfolioNameRequest("Changed")))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        assertThat(portfolioRepository.findById(bobsPortfolio.getId()).orElseThrow().getName())
+                .isEqualTo("Bob's portfolio");
+    }
+
+    @Test
+    void renamePortfolio_rejectsBlankName() {
+        assertThatThrownBy(() -> portfolioService.renamePortfolio(
+                "alice", portfolio.getId(), new UpdatePortfolioNameRequest("  ")))
+                .isInstanceOf(InvalidTradeException.class)
+                .hasMessage("Portfolio name is required");
     }
 
     @Test

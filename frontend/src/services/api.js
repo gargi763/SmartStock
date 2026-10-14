@@ -73,6 +73,26 @@ export const api = {
 
   getPortfolios: (credentials) => request('/api/v1/portfolios', { credentials }),
 
+  getInvestmentJournalEntries: (credentials) => request('/api/v1/investment-journal', { credentials }),
+
+  getInvestmentJournalTrades: (credentials) => request('/api/v1/investment-journal/trades', { credentials }),
+
+  createInvestmentJournalEntry: (credentials, entry) => request('/api/v1/investment-journal', {
+    credentials,
+    method: 'POST',
+    body: JSON.stringify(entry),
+  }),
+
+  updateInvestmentJournalEntry: (credentials, entryId, entry) => request(
+    `/api/v1/investment-journal/${encodeURIComponent(entryId)}`,
+    { credentials, method: 'PUT', body: JSON.stringify(entry) },
+  ),
+
+  deleteInvestmentJournalEntry: (credentials, entryId) => request(
+    `/api/v1/investment-journal/${encodeURIComponent(entryId)}`,
+    { credentials, method: 'DELETE' },
+  ),
+
   getAdminDashboard: (credentials) => request('/api/v1/admin/dashboard', { credentials }),
 
   getAdminUsers: (credentials) => request('/api/v1/admin/users', { credentials }),
@@ -126,6 +146,11 @@ export const api = {
   createPortfolio: (credentials, name) => request(
     `/api/v1/portfolios?name=${encodeURIComponent(name)}`,
     { credentials, method: 'POST' },
+  ),
+
+  renamePortfolio: (credentials, portfolioId, name) => request(
+    `/api/v1/portfolios/${encodeURIComponent(portfolioId)}`,
+    { credentials, method: 'PUT', body: JSON.stringify({ name }) },
   ),
 
   trade: (credentials, portfolioId, tradeType, trade) => request(

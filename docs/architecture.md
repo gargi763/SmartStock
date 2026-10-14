@@ -104,10 +104,15 @@ sequenceDiagram
 The trade price is resolved from the backend's stored stock record, not trusted from a client-supplied value. An invalid/unavailable source or price rejects the trade. Monetary arithmetic uses `BigDecimal`; the service transaction keeps cash, holdings, and history updates together. Portfolio lookups for changes are locked and filtered to the authenticated owner.
 
 Portfolio responses include current cash, total value, holdings with average cost and unrealized P/L, transaction history, realized P/L, and total P/L. Values are derived by backend services rather than accepted from the frontend.
+The owner can rename a portfolio with `PUT /api/v1/portfolios/{portfolioId}`. The controller takes the authenticated principal and a validated name DTO; the service locks the portfolio, verifies ownership, changes only its name, and returns the existing portfolio summary.
 
 ### Watchlist
 
 The watchlist controller passes the authenticated username to `WatchlistService`. The service loads the user and adds, lists, or deletes only entries belonging to that user. The client submits stock symbols but never supplies a user ID for ownership.
+
+### Investment journal
+
+`InvestmentJournalController` passes the authenticated username to `InvestmentJournalService`. The service queries and mutates entries only when their owner matches that username. Journal text and tags use dedicated `investment_journal_entries` and `investment_journal_tags` tables. An optional linked trade is accepted only when it is a completed transaction belonging to the same user; the journal reads its symbol/type/date but never modifies trade, holding, or cash records.
 
 ### Stock discovery and intelligence
 

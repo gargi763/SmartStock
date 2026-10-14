@@ -278,6 +278,25 @@ h1 {
   min-width: 185px;
 }
 
+.portfolio-rename-form {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.portfolio-rename-form input {
+  width: min(190px, 28vw);
+  min-width: 120px;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.83rem;
+}
+
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2221,6 +2240,172 @@ button:disabled {
   opacity: 0.58;
 }
 
+.journal-page {
+  min-height: 100vh;
+}
+
+.journal-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.82fr) minmax(0, 1.18fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.journal-editor {
+  position: sticky;
+  top: 20px;
+}
+
+.journal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.journal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 620;
+}
+
+.journal-form input,
+.journal-form textarea,
+.journal-form select {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 450;
+  resize: vertical;
+}
+
+.journal-form textarea {
+  min-height: 94px;
+  line-height: 1.5;
+}
+
+.journal-label-hint,
+.journal-helper {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 450;
+}
+
+.journal-helper {
+  margin: -4px 0 0;
+  line-height: 1.5;
+}
+
+.journal-form-actions,
+.journal-entry-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.journal-list-header {
+  padding: 5px 3px 4px;
+}
+
+.journal-list-header h2,
+.journal-editor .panel-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.journal-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.journal-entry-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.journal-entry-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.journal-entry-topline h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.04rem;
+  font-weight: 670;
+  overflow-wrap: anywhere;
+}
+
+.journal-entry-topline .panel-caption {
+  margin-top: 5px;
+}
+
+.journal-entry-actions {
+  flex: 0 0 auto;
+}
+
+.journal-note-section h4 {
+  margin: 0 0 5px;
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+}
+
+.journal-note-section p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.84rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.journal-trade-link {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #dcebe2;
+  border-radius: 9px;
+  background: var(--brand-soft);
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.journal-trade-link strong {
+  color: var(--brand-dark);
+}
+
+.journal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journal-tags li {
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-subtle);
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+}
+
 @media (max-width: 1120px) {
   .app-shell {
     grid-template-columns: 218px minmax(0, 1fr);
@@ -2254,6 +2439,14 @@ button:disabled {
 
   .admin-management-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .journal-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .journal-editor {
+    position: static;
   }
 }
 
@@ -2380,6 +2573,14 @@ button:disabled {
     grid-template-columns: 92px minmax(0, 1fr);
   }
 
+  .journal-entry-topline {
+    flex-direction: column;
+  }
+
+  .journal-entry-actions {
+    justify-content: flex-start;
+  }
+
   .watchlist-add-form {
     align-items: stretch;
     flex-direction: column;
@@ -2463,8 +2664,18 @@ button:disabled {
 
   .portfolio-picker,
   .portfolio-picker select,
-  .topbar-actions .primary-btn {
+  .topbar-actions > .primary-btn {
     width: 100%;
+  }
+
+  .portfolio-rename-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .portfolio-rename-form input {
+    width: 100%;
+    grid-column: 1 / -1;
   }
 
   .summary-grid {

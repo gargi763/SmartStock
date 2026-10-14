@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from './services/api'
+import InvestmentJournal from './InvestmentJournal'
 import './App.css'
 
 const moneyFormatter = new Intl.NumberFormat('en-US', {
@@ -1022,6 +1023,10 @@ function App() {
   const [stockSort, setStockSort] = useState('symbol')
   const [createOpen, setCreateOpen] = useState(false)
   const [portfolioName, setPortfolioName] = useState('')
+  const [editingPortfolioName, setEditingPortfolioName] = useState(false)
+  const [portfolioNameDraft, setPortfolioNameDraft] = useState('')
+  const [portfolioNameError, setPortfolioNameError] = useState('')
+  const [renameBusy, setRenameBusy] = useState(false)
   const [tradeStock, setTradeStock] = useState(null)
   const [tradeType, setTradeType] = useState('buy')
   const [quantity, setQuantity] = useState('1')
@@ -1200,6 +1205,30 @@ function App() {
     }
   }
 
+  async function handleRenamePortfolio(event) {
+    event.preventDefault()
+    if (!credentials || !selectedPortfolio) return
+
+    setRenameBusy(true)
+    setPortfolioNameError('')
+    try {
+      const updatedPortfolio = await api.renamePortfolio(
+        credentials,
+        selectedPortfolio.id,
+        portfolioNameDraft.trim(),
+      )
+      setPortfolios((current) => current.map((portfolio) => (
+        portfolio.id === updatedPortfolio.id ? updatedPortfolio : portfolio
+      )))
+      setEditingPortfolioName(false)
+      setNotice(`Portfolio renamed to “${updatedPortfolio.name}”.`)
+    } catch (requestError) {
+      setPortfolioNameError(requestError.message)
+    } finally {
+      setRenameBusy(false)
+    }
+  }
+
   async function handleTrade(event) {
     event.preventDefault()
     if (!credentials || !selectedPortfolio || !tradeStock) return
@@ -1293,17 +1322,27 @@ function App() {
               <a className="nav-item" href="#analytics">Analytics</a>
               <a className="nav-item" href="#watchlist">Watchlist</a>
               <button className="nav-item intelligence-nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           ) : activePage === 'admin' ? (
             <>
               <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Investor dashboard</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
               <button className="nav-item active admin-nav-item" type="button" aria-current="page">Admin portal</button>
+            </>
+          ) : activePage === 'journal' ? (
+            <>
+              <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Dashboard</button>
+              <button className="nav-item active" type="button" aria-current="page">Investment Journal</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           ) : (
             <>
               <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Dashboard</button>
               <button className="nav-item active" type="button" aria-current="page" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           )}
@@ -1317,7 +1356,12 @@ function App() {
         <button className="nav-item signout-btn" type="button" onClick={signOut}>Sign out</button>
       </aside>
 
-      {activePage === 'admin' && isAdmin ? (
+      {activePage === 'journal' ? (
+        <InvestmentJournal
+          credentials={credentials}
+          onBackToDashboard={() => setActivePage('dashboard')}
+        />
+      ) : activePage === 'admin' && isAdmin ? (
         <AdminPortal
           credentials={credentials}
           user={user}
@@ -1336,7 +1380,11 @@ function App() {
                 <span>Portfolio</span>
                 <select
                   value={selectedPortfolioId}
-                  onChange={(event) => setSelectedPortfolioId(event.target.value)}
+                  onChange={(event) => {
+                    setSelectedPortfolioId(event.target.value)
+                    setEditingPortfolioName(false)
+                    setPortfolioNameError('')
+                  }}
                   aria-label="Select portfolio"
                 >
                   {portfolios.map((portfolio) => (
@@ -1344,6 +1392,37 @@ function App() {
                   ))}
                 </select>
               </label>
+            )}
+            {selectedPortfolio && !editingPortfolioName && (
+              <button className="ghost-btn" type="button" onClick={() => {
+                setPortfolioNameDraft(selectedPortfolio.name)
+                setPortfolioNameError('')
+                setEditingPortfolioName(true)
+              }}>
+                Rename portfolio
+              </button>
+            )}
+            {selectedPortfolio && editingPortfolioName && (
+              <form className="portfolio-rename-form" onSubmit={handleRenamePortfolio}>
+                <label className="visually-hidden" htmlFor="portfolio-name-edit">Portfolio name</label>
+                <input
+                  id="portfolio-name-edit"
+                  autoFocus
+                  required
+                  maxLength={80}
+                  value={portfolioNameDraft}
+                  onChange={(event) => setPortfolioNameDraft(event.target.value)}
+                />
+                <button className="primary-btn" type="submit" disabled={renameBusy || !portfolioNameDraft.trim()}>
+                  {renameBusy ? 'Saving…' : 'Save name'}
+                </button>
+                <button className="ghost-btn" type="button" disabled={renameBusy} onClick={() => {
+                  setEditingPortfolioName(false)
+                  setPortfolioNameError('')
+                }}>
+                  Cancel
+                </button>
+              </form>
             )}
             <button className="primary-btn" type="button" onClick={() => {
               setActionError('')
@@ -1353,6 +1432,8 @@ function App() {
             </button>
           </div>
         </header>
+
+        {portfolioNameError && <div className="alert error-alert" role="alert">{portfolioNameError}</div>}
 
         <div className="data-source-note" role="note">
           Market prices are supplied by the backend and may be simulated demo data. Demo prices are not live market data.
