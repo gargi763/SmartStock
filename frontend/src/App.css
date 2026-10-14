@@ -148,6 +148,320 @@
   overflow-wrap: anywhere;
 }
 
+.simulator-page {
+  grid-column: 2;
+  width: min(100%, 1320px);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 34px clamp(22px, 3.2vw, 52px) 48px;
+}
+
+.simulator-page-heading {
+  margin-bottom: 22px;
+}
+
+.simulator-page-heading h1 {
+  margin-bottom: 9px;
+}
+
+.simulator-page-heading > p:last-child {
+  max-width: 720px;
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.simulator-disclaimer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid #dce9df;
+  border-radius: 12px;
+  background: #f1f8f3;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+
+.simulator-disclaimer strong {
+  color: #24563e;
+}
+
+.simulator-panel {
+  min-width: 0;
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.simulator-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.simulator-panel-heading h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.16rem;
+  font-weight: 670;
+  letter-spacing: -0.025em;
+}
+
+.simulator-panel-heading > span,
+.simulator-note {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.simulator-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.simulator-form > label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  font-weight: 610;
+}
+
+.simulator-form label em {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 450;
+}
+
+.simulator-form input {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: #fff;
+  color: var(--ink);
+}
+
+.simulator-form input:focus-visible {
+  border-color: var(--brand);
+  outline: 3px solid rgba(37, 132, 92, 0.18);
+}
+
+.simulator-form small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 430;
+  line-height: 1.45;
+}
+
+.simulator-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 2px;
+}
+
+.simulator-errors {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #efc5bf;
+  border-radius: 10px;
+  background: #fff6f4;
+  color: #8d342d;
+  font-size: 0.86rem;
+}
+
+.simulator-errors ul {
+  margin: 5px 0 0;
+  padding-left: 19px;
+}
+
+.simulator-state {
+  margin: 16px 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.simulator-results {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.simulator-summary-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.simulator-summary-card > span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 570;
+}
+
+.simulator-summary-card strong {
+  color: var(--ink);
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-weight: 690;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.simulator-summary-card > small {
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.simulator-summary-featured {
+  border-color: #cfe7d8;
+  background: #f6fbf7;
+}
+
+.simulator-positive {
+  color: #27744e !important;
+}
+
+.simulator-negative {
+  color: #b43f39 !important;
+}
+
+.simulator-chart-wrap {
+  width: 100%;
+  min-width: 0;
+}
+
+.simulator-chart {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.simulator-chart-grid {
+  stroke: #e8eeeb;
+  stroke-width: 1;
+}
+
+.simulator-chart-axis-label {
+  fill: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.simulator-chart-projection,
+.simulator-chart-contributions {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.simulator-chart-projection {
+  stroke: #25845c;
+}
+
+.simulator-chart-contributions {
+  stroke: #82958c;
+  stroke-dasharray: 7 5;
+}
+
+.simulator-chart-point {
+  fill: #25845c;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.simulator-chart-contribution-point {
+  fill: #82958c;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.simulator-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 3px 10px 12px;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.simulator-chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.simulator-chart-legend i {
+  display: inline-block;
+  width: 22px;
+  border-top: 3px solid;
+}
+
+.simulator-legend-projection {
+  border-color: #25845c;
+}
+
+.simulator-legend-contributions {
+  border-color: #82958c;
+  border-top-style: dashed;
+}
+
+.simulator-note {
+  margin: 10px 0 0;
+  line-height: 1.55;
+}
+
+.simulator-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.simulator-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.82rem;
+}
+
+.simulator-table th,
+.simulator-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.simulator-table thead th {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 620;
+}
+
+.simulator-table tbody th {
+  color: var(--ink);
+  font-weight: 620;
+}
+
 .signout-btn {
   width: 100%;
   min-height: 42px;
@@ -3114,5 +3428,37 @@ button:disabled {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 840px) {
+  .simulator-page {
+    grid-column: 1;
+    width: 100%;
+    padding: 25px 20px 36px;
+  }
+}
+
+@media (max-width: 600px) {
+  .simulator-page {
+    padding: 22px 14px 30px;
+  }
+
+  .simulator-form,
+  .simulator-results {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .simulator-panel {
+    padding: 16px;
+  }
+
+  .simulator-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .simulator-chart-axis-label {
+    font-size: 15px;
   }
 }

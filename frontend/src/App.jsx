@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from './services/api'
 import InvestmentJournal from './InvestmentJournal'
+import InvestmentSimulator from './InvestmentSimulator'
 import MarketHeatmap from './MarketHeatmap'
 import './App.css'
 
@@ -1320,14 +1321,10 @@ function App() {
               >
                 Dashboard
               </a>
-              <a className="nav-item" href="#discover-stocks">Discover Stocks</a>
-              <a className="nav-item" href="#my-portfolio">My Portfolio</a>
-              <a className="nav-item" href="#transaction-history">Transaction History</a>
-              <a className="nav-item" href="#analytics">Analytics</a>
-              <a className="nav-item" href="#watchlist">Watchlist</a>
               <button className="nav-item intelligence-nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('simulator')}>Investment Simulator</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           ) : activePage === 'admin' ? (
@@ -1335,6 +1332,7 @@ function App() {
               <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Investor dashboard</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('simulator')}>Investment Simulator</button>
               <button className="nav-item active admin-nav-item" type="button" aria-current="page">Admin portal</button>
             </>
           ) : activePage === 'journal' ? (
@@ -1343,6 +1341,7 @@ function App() {
               <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
               <button className="nav-item active" type="button" aria-current="page">Investment Journal</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('simulator')}>Investment Simulator</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           ) : activePage === 'heatmap' ? (
@@ -1351,6 +1350,16 @@ function App() {
               <button className="nav-item active" type="button" aria-current="page">Market Heatmap</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('simulator')}>Investment Simulator</button>
+              {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
+            </>
+          ) : activePage === 'simulator' ? (
+            <>
+              <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Dashboard</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
+              <button className="nav-item active" type="button" aria-current="page">Investment Simulator</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           ) : (
@@ -1359,6 +1368,7 @@ function App() {
               <button className="nav-item active" type="button" aria-current="page" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('simulator')}>Investment Simulator</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           )}
@@ -1372,7 +1382,9 @@ function App() {
         <button className="nav-item signout-btn" type="button" onClick={signOut}>Sign out</button>
       </aside>
 
-      {activePage === 'journal' ? (
+      {activePage === 'simulator' ? (
+        <InvestmentSimulator credentials={credentials} />
+      ) : activePage === 'journal' ? (
         <InvestmentJournal
           credentials={credentials}
           onBackToDashboard={() => setActivePage('dashboard')}

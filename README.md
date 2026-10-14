@@ -14,6 +14,7 @@ SmartStock is a full-stack stock portfolio management application for practicing
 - View holdings, average purchase costs, cash, portfolio valuation, transaction history, and realized/unrealized profit and loss.
 - View historical daily prices and company fundamentals when the configured market-data provider supports the requested data.
 - Keep a private investment journal with a thesis, lessons learned, optional tags, and an optional link to one of the account's completed virtual trades.
+- Calculate hypothetical investment projections with an optional recurring contribution and compare up to three temporary scenarios.
 
 ### Admin portal
 
@@ -37,6 +38,12 @@ Admin links in React are role-gated for usability. The backend independently pro
 | Market-data provider | Alpha Vantage for supported historical daily prices and fundamentals |
 
 The frontend calls a dedicated API module; Spring controllers delegate to services, which enforce business rules and use repositories for persistence. See [docs/architecture.md](docs/architecture.md) for the component diagram and request flows.
+
+### Investment simulator
+
+Authenticated users can calculate a hypothetical projection with `POST /api/v1/simulations/calculate`. The request accepts an initial investment, optional monthly contribution, duration in months, annual return assumption, and optional stock-symbol reference and scenario name. Stock symbols are labels only; calculations do not fetch prices, make forecasts, or execute trades. Scenario comparisons remain temporary in the browser and are not persisted.
+
+The service converts an effective annual return `a` to a monthly rate `r = (1 + a)^(1/12) - 1`. For `n` end-of-month contribution periods, it computes initial future value `P × (1 + r)^n`, contribution future value `C × (((1 + r)^n - 1) / r)`, and total contributions `P + C × n`; the contribution future value is `C × n` when `r` is zero. An annual return of -100% is supported explicitly: the initial balance is reduced to zero in the first month, while each end-of-month deposit remains at its just-contributed amount through that month. The annual-to-monthly fractional power uses Java `Math.pow` double precision; subsequent monetary arithmetic uses `BigDecimal` with DECIMAL128 precision. Reported values are rounded to cents using HALF_EVEN, and timeline endpoints use the same rounded calculation as the summary.
 
 ## Requirements
 

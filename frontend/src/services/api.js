@@ -77,6 +77,12 @@ export const api = {
 
   getInvestmentJournalTrades: (credentials) => request('/api/v1/investment-journal/trades', { credentials }),
 
+  calculateSimulation: (credentials, assumptions) => request('/api/v1/simulations/calculate', {
+    credentials,
+    method: 'POST',
+    body: JSON.stringify(assumptions),
+  }),
+
   createInvestmentJournalEntry: (credentials, entry) => request('/api/v1/investment-journal', {
     credentials,
     method: 'POST',
