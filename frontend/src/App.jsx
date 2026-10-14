@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from './services/api'
 import InvestmentJournal from './InvestmentJournal'
+import MarketHeatmap from './MarketHeatmap'
 import './App.css'
 
 const moneyFormatter = new Intl.NumberFormat('en-US', {
@@ -159,9 +160,9 @@ function AuthPanel({ onAuthenticate, error, busy }) {
   )
 }
 
-function StockIntelligence({ stocks, credentials, hasPortfolio, onBackToDashboard, onTrade }) {
+function StockIntelligence({ stocks, credentials, hasPortfolio, initialSymbol, onBackToDashboard, onTrade }) {
   const [stockSearch, setStockSearch] = useState('')
-  const [selectedSymbol, setSelectedSymbol] = useState(stocks[0]?.symbol || '')
+  const [selectedSymbol, setSelectedSymbol] = useState(initialSymbol || stocks[0]?.symbol || '')
   const [historyRange, setHistoryRange] = useState('1M')
   const [historyData, setHistoryData] = useState(null)
   const [historyLoading, setHistoryLoading] = useState(Boolean(stocks[0]?.symbol))
@@ -173,7 +174,9 @@ function StockIntelligence({ stocks, credentials, hasPortfolio, onBackToDashboar
   const [fundamentalsRetry, setFundamentalsRetry] = useState(0)
   const [investmentAmount, setInvestmentAmount] = useState('')
   const [quantity, setQuantity] = useState('')
-  const [buyPrice, setBuyPrice] = useState(String(stocks[0]?.currentPrice ?? ''))
+  const [buyPrice, setBuyPrice] = useState(String(
+    stocks.find((stock) => stock.symbol === initialSymbol)?.currentPrice ?? stocks[0]?.currentPrice ?? '',
+  ))
   const [targetPrice, setTargetPrice] = useState('')
 
   const matchingStocks = stocks.filter((stock) => {
@@ -1019,6 +1022,7 @@ function App() {
   const [portfolios, setPortfolios] = useState([])
   const [selectedPortfolioId, setSelectedPortfolioId] = useState('')
   const [activePage, setActivePage] = useState('dashboard')
+  const [intelligenceSymbol, setIntelligenceSymbol] = useState('')
   const [search, setSearch] = useState('')
   const [stockSort, setStockSort] = useState('symbol')
   const [createOpen, setCreateOpen] = useState(false)
@@ -1322,6 +1326,7 @@ function App() {
               <a className="nav-item" href="#analytics">Analytics</a>
               <a className="nav-item" href="#watchlist">Watchlist</a>
               <button className="nav-item intelligence-nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
@@ -1329,19 +1334,30 @@ function App() {
             <>
               <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Investor dashboard</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
               <button className="nav-item active admin-nav-item" type="button" aria-current="page">Admin portal</button>
             </>
           ) : activePage === 'journal' ? (
             <>
               <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Dashboard</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
               <button className="nav-item active" type="button" aria-current="page">Investment Journal</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
+            </>
+          ) : activePage === 'heatmap' ? (
+            <>
+              <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Dashboard</button>
+              <button className="nav-item active" type="button" aria-current="page">Market Heatmap</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
           ) : (
             <>
               <button className="nav-item" type="button" onClick={() => setActivePage('dashboard')}>Dashboard</button>
               <button className="nav-item active" type="button" aria-current="page" onClick={() => setActivePage('intelligence')}>Stock Intelligence</button>
+              <button className="nav-item" type="button" onClick={() => setActivePage('heatmap')}>Market Heatmap</button>
               <button className="nav-item" type="button" onClick={() => setActivePage('journal')}>Investment Journal</button>
               {isAdmin && <button className="nav-item admin-nav-item" type="button" onClick={() => setActivePage('admin')}>Admin portal</button>}
             </>
@@ -1359,6 +1375,22 @@ function App() {
       {activePage === 'journal' ? (
         <InvestmentJournal
           credentials={credentials}
+          onBackToDashboard={() => setActivePage('dashboard')}
+        />
+      ) : activePage === 'heatmap' ? (
+        <MarketHeatmap
+          stocks={stocks}
+          loading={loading}
+          error={dataError}
+          onRetry={() => {
+            setLoading(true)
+            setDataError('')
+            setRefreshNumber((current) => current + 1)
+          }}
+          onSelectStock={(symbol) => {
+            setIntelligenceSymbol(symbol)
+            setActivePage('intelligence')
+          }}
           onBackToDashboard={() => setActivePage('dashboard')}
         />
       ) : activePage === 'admin' && isAdmin ? (
@@ -1922,6 +1954,7 @@ function App() {
           stocks={stocks}
           credentials={credentials}
           hasPortfolio={Boolean(selectedPortfolio)}
+          initialSymbol={intelligenceSymbol}
           onBackToDashboard={() => setActivePage('dashboard')}
           onTrade={openTrade}
         />
